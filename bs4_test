@@ -1,0 +1,31 @@
+from bs4 import BeautifulSoup
+import  requests
+import re
+
+
+# 选取测试网页 https://www.baidu.com
+r = requests.get("https://www.baidu.com")
+r.encoding = r.apparent_encoding
+html_text = r.text  #解析网页的内容，获取html代码
+# print(html_text)
+
+# 创建BeautifulSoup对象
+soup = BeautifulSoup(html_text, 'html.parser')
+
+# 结构化输出
+print(soup.prettify())
+
+print('获取所有链接：\n')
+links = soup.find_all('a')  # 返回子节点tag的列表类型
+for link in links:
+    print(link.name, link.attrs['href'], link.get_text())
+    # print(link.name, link['href'], link.get_text())
+
+print('获取百度地图连接:\n')
+map_link = soup.find('a',href='http://v.baidu.com')
+print(map_link.name,map_link['href'],map_link.get_text())
+
+print('正则匹配')
+link_node=soup.find_all('a',href=re.compile(r"http://(.+?).baidu.com"))
+for link in link_node:
+    print(link.name, link.attrs['href'], link.get_text())
